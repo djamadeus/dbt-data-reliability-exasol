@@ -49,6 +49,40 @@
  {%- endif%}
 {% endmacro %}
 
+{% macro exasol__get_normalized_data_type(exact_data_type) %}
+{# understanding Exasol data type synonyms:
+ https://docs.exasol.com/db/latest/sql_references/data_types/datatypealiases.htm #}
+ {% set exact_data_type_to_data_type_returned_by_the_info_schema = {'VARCHAR': 'TEXT',
+                'BIGINT': 'DECIMAL(36,0)',
+                'BOOL': 'BOOLEAN',
+                'CHAR': 'CHAR(1)',
+                'CHARACTER': 'CHAR(1)',
+                'CHARACTER LARGE OBJECT': 'VARCHAR(2000000)',
+                'CLOB': 'VARCHAR(2000000)',
+                'DEC': 'DECIMAL(18,0)',
+                'DECIMAL': 'DECIMAL(18,0)',
+                'DOUBLE':'	DOUBLE PRECISION',
+                'HASHTYPE':'HASHTYPE (16 BYTE)',
+                'FLOAT':'DOUBLE PRECISION',
+                'INT':'DECIMAL(18,0)',
+                'INTEGER':'DECIMAL(18,0)',
+                'LONG VARCHAR':'VARCHAR(2000000)',
+                'NUMBER': 'DOUBLE PRECISION',
+                'NUMERIC':'DECIMAL(18,0)',
+                'REAL': 'DOUBLE PRECISION',
+                'SHORTINT':'	DECIMAL(9,0)',
+                'SMALLINT': '	DECIMAL(9,0)',
+                'TIMESTAMP':'TIMESTAMP(3)',
+                'TIMESTAMP WITH LOCAL TIME ZONE':'TIMESTAMP(3) WITH LOCAL TIME ZONE',
+                'TINYINT':'DECIMAL(3,0)'
+                }%}
+ {%- if exact_data_type in exact_data_type_to_data_type_returned_by_the_info_schema%}
+   {{ return (exact_data_type_to_data_type_returned_by_the_info_schema[exact_data_type])}}
+ {%- else %}
+   {{return (exact_data_type) }}
+ {%- endif%}
+{% endmacro %}
+
 
 
 {% macro spark__get_normalized_data_type(exact_data_type) %}

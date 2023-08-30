@@ -7,9 +7,11 @@
     {{- return('') -}}
 {%- endmacro -%}
 
-
-
 {% macro get_dbt_exposures_empty_table_query() %}
+    {{ return(adapter.dispatch('get_dbt_exposures_empty_table_query', 'elementary')()) }}
+{% endmacro %}
+
+{% macro default__get_dbt_exposures_empty_table_query() %}
     {% set dbt_exposures_empty_table_query = elementary.empty_table([('unique_id', 'string'),
                                                                      ('name', 'string'),
                                                                      ('maturity', 'string'),
@@ -29,6 +31,29 @@
                                                                      ('metadata_hash', 'string'),
                                                                      ('label', 'string'),
                                                                      ('raw_queries', 'long_string'),
+                                                                     ]) %}
+    {{ return(dbt_exposures_empty_table_query) }}
+{% endmacro %}
+
+{% macro exasol__get_dbt_exposures_empty_table_query() %}
+    {% set dbt_exposures_empty_table_query = elementary.empty_table([('unique_id', 'string'),
+                                                                     ('name', 'string'),
+                                                                     ('maturity', 'string'),
+                                                                     ('type', 'string'),
+                                                                     ('owner_email', 'string'),
+                                                                     ('owner_name', 'string'),
+                                                                     ('url', 'long_string'),
+                                                                     ('depends_on_macros', 'long_string'),
+                                                                     ('depends_on_nodes', 'long_string'),
+                                                                     ('description', 'long_string'),
+                                                                     ('tags', 'long_string'),
+                                                                     ('meta', 'long_string'),
+                                                                     ('package_name', 'string'),
+                                                                     ('original_path', 'long_string'),
+                                                                     ('"PATH"', 'string'),
+                                                                     ('generated_at', 'string'),
+                                                                     ('metadata_hash', 'string'),
+                                                                     ('label', 'string'),
                                                                      ]) %}
     {{ return(dbt_exposures_empty_table_query) }}
 {% endmacro %}
