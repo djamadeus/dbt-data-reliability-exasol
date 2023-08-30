@@ -58,6 +58,29 @@
     {{ return(dbt_exposures_empty_table_query) }}
 {% endmacro %}
 
+{% macro exasol__get_dbt_exposures_empty_table_query() %}
+    {% set dbt_exposures_empty_table_query = elementary.empty_table([('unique_id', 'string'),
+                                                                     ('name', 'string'),
+                                                                     ('maturity', 'string'),
+                                                                     ('type', 'string'),
+                                                                     ('owner_email', 'string'),
+                                                                     ('owner_name', 'string'),
+                                                                     ('url', 'long_string'),
+                                                                     ('depends_on_macros', 'long_string'),
+                                                                     ('depends_on_nodes', 'long_string'),
+                                                                     ('description', 'long_string'),
+                                                                     ('tags', 'long_string'),
+                                                                     ('meta', 'long_string'),
+                                                                     ('package_name', 'string'),
+                                                                     ('original_path', 'long_string'),
+                                                                     ('"PATH"', 'string'),
+                                                                     ('generated_at', 'string'),
+                                                                     ('metadata_hash', 'string'),
+                                                                     ('label', 'string'),
+                                                                     ]) %}
+    {{ return(dbt_exposures_empty_table_query) }}
+{% endmacro %}
+
 {% macro flatten_exposure(node_dict) %}
     {% set owner_dict = elementary.safe_get_with_default(node_dict, 'owner', {}) %}
     {% set depends_on_dict = elementary.safe_get_with_default(node_dict, 'depends_on', {}) %}
