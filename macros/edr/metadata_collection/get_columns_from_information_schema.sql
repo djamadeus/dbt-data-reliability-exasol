@@ -31,6 +31,18 @@
     {% endif %}
 {% endmacro %}
 
+{% macro exasol__get_columns_from_information_schema(database_name, schema_name) %}
+select
+    upper('{{ database_name }}' || '.' || COLUMN_SCHEMA || '.' || COLUMN_TABLE) as full_table_name,
+    '{{ database_name }}' as database_name,
+    upper(COLUMN_SCHEMA) as schema_name,
+    upper(COLUMN_TABLE) as table_name,
+    upper(COLUMN_NAME) as column_name,
+    COLUMN_TYPE
+from sys.EXA_ALL_COLUMNS
+where upper(COLUMN_SCHEMA) = upper('{{ schema_name }}')
+    {% endmacro %}
+
 {% macro redshift__get_columns_from_information_schema(database_name, schema_name, table_name = none) %}
     select
         upper(table_catalog || '.' || table_schema || '.' || table_name) as full_table_name,
@@ -45,32 +57,6 @@
       and upper(table_name) = upper('{{ table_name }}')
     {% endif %}
 {% endmacro %}
-
-{% macro exasol__get_columns_from_information_schema(database_name, schema_name) %}
-select
-    upper('{{ database_name }}' || '.' || COLUMN_SCHEMA || '.' || COLUMN_TABLE) as full_table_name,
-    '{{ database_name }}' as database_name,
-    upper(COLUMN_SCHEMA) as schema_name,
-    upper(COLUMN_TABLE) as table_name,
-    upper(COLUMN_NAME) as column_name,
-    COLUMN_TYPE
-from sys.EXA_ALL_COLUMNS
-where upper(COLUMN_SCHEMA) = upper('{{ schema_name }}')
-{% endmacro %}
-
-
-{% macro exasol__get_columns_from_information_schema(database_name, schema_name) %}
-    select
-        upper('{{ database_name }}' || '.' || COLUMN_SCHEMA || '.' || COLUMN_TABLE) as full_table_name,
-        '{{ database_name }}' as database_name,
-        upper(COLUMN_SCHEMA) as schema_name,
-        upper(COLUMN_TABLE) as table_name,
-        upper(COLUMN_NAME) as column_name,
-        COLUMN_TYPE
-    from sys.EXA_ALL_COLUMNS
-        where upper(COLUMN_SCHEMA) = upper('{{ schema_name }}')
-{% endmacro %}
-
 
 {% macro postgres__get_columns_from_information_schema(database_name, schema_name, table_name = none) %}
 select
