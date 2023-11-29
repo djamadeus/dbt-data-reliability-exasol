@@ -1,3 +1,7 @@
+{% macro dummy_values() %}
+    {{ return(adapter.dispatch('dummy_values', 'elementary')()) }}
+{% endmacro %}
+
 {% macro empty_elementary_test_results() %}
     {{ elementary.empty_table([
     ('id','long_string'),
@@ -130,7 +134,7 @@
 {% endmacro %}
 
 
-{% macro dummy_values() %}
+{% macro default__dummy_values() %}
 
     {%- set dummy_values = {
      'string': "dummy_string",
@@ -140,6 +144,23 @@
      'bigint': 31474836478,
      'float': 123456789.99,
      'timestamp': "2091-02-17"
+    } %}
+
+    {{ return(dummy_values) }}
+
+{% endmacro %}
+
+
+{% macro exasol__dummy_values() %}
+
+    {%- set dummy_values = {
+     'string': "dummy_string",
+     'long_string': "this_is_just_a_long_dummy_string",
+     'boolean': 'True',
+     'int': 123456789,
+     'bigint': 31474836478,
+     'float': 123456789.99,
+     'timestamp': "2091-02-17T00:00:00.000"
     } %}
 
     {{ return(dummy_values) }}
