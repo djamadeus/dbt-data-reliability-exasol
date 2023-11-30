@@ -1,3 +1,7 @@
+{% macro get_dbt_sources_empty_table_query() %}
+    {{ return(adapter.dispatch('get_dbt_sources_empty_table_query','elementary')()) }}
+{% endmacro %}
+
 {%- macro upload_dbt_sources(should_commit=false, metadata_hashes=none) -%}
     {% set relation = elementary.get_elementary_relation('dbt_sources') %}
     {% if execute and relation %}
@@ -8,8 +12,7 @@
 {%- endmacro -%}
 
 
-
-{% macro get_dbt_sources_empty_table_query() %}
+{% macro default__get_dbt_sources_empty_table_query() %}
     {% set dbt_sources_empty_table_query = elementary.empty_table([('unique_id', 'string'),
                                                                    ('database_name', 'string'),
                                                                    ('schema_name', 'string'),
@@ -28,6 +31,33 @@
                                                                    ('package_name', 'string'),
                                                                    ('original_path', 'long_string'),
                                                                    ('path', 'string'),
+                                                                   ('source_description', 'long_string'),
+                                                                   ('description', 'long_string'),
+                                                                   ('generated_at', 'string'),
+                                                                   ('metadata_hash', 'string'),
+                                                                   ]) %}
+    {{ return(dbt_sources_empty_table_query) }}
+{% endmacro %}
+
+{% macro exasol__get_dbt_sources_empty_table_query() %}
+    {% set dbt_sources_empty_table_query = elementary.empty_table([('unique_id', 'string'),
+                                                                   ('database_name', 'string'),
+                                                                   ('schema_name', 'string'),
+                                                                   ('source_name', 'string'),
+                                                                   ('name', 'string'),
+                                                                   ('identifier', 'string'),
+                                                                   ('loaded_at_field', 'string'),
+                                                                   ('freshness_warn_after', 'string'),
+                                                                   ('freshness_error_after', 'string'),
+                                                                   ('freshness_filter', 'long_string'),
+                                                                   ('freshness_description', 'long_string'),
+                                                                   ('relation_name', 'string'),
+                                                                   ('tags', 'long_string'),
+                                                                   ('meta', 'long_string'),
+                                                                   ('owner', 'string'),
+                                                                   ('package_name', 'string'),
+                                                                   ('original_path', 'long_string'),
+                                                                   ('"PATH"', 'string'),
                                                                    ('source_description', 'long_string'),
                                                                    ('description', 'long_string'),
                                                                    ('generated_at', 'string'),

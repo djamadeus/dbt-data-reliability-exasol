@@ -1,3 +1,7 @@
+{% macro get_dbt_tests_empty_table_query() %}
+    {{ return(adapter.dispatch('get_dbt_tests_empty_table_query','elementary')()) }}
+{% endmacro %}
+
 {%- macro upload_dbt_tests(should_commit=false, metadata_hashes=none) -%}
     {% set relation = elementary.get_elementary_relation('dbt_tests') %}
     {% if execute and relation %}
@@ -10,7 +14,7 @@
 
 
 
-{% macro get_dbt_tests_empty_table_query() %}
+{% macro default__get_dbt_tests_empty_table_query() %}
     {% set dbt_tests_empty_table_query = elementary.empty_table([('unique_id', 'string'),
                                                                  ('database_name', 'string'),
                                                                  ('schema_name', 'string'),
@@ -35,6 +39,38 @@
                                                                  ('type', 'string'),
                                                                  ('original_path', 'long_string'),
                                                                  ('path', 'string'),
+                                                                 ('generated_at', 'string'),
+                                                                 ('metadata_hash', 'string'),
+                                                                 ('quality_dimension', 'string')
+                                                                 ]) %}
+    {{ return(dbt_tests_empty_table_query) }}
+{% endmacro %}
+
+{% macro exasol__get_dbt_tests_empty_table_query() %}
+    {% set dbt_tests_empty_table_query = elementary.empty_table([('unique_id', 'string'),
+                                                                 ('database_name', 'string'),
+                                                                 ('schema_name', 'string'),
+                                                                 ('name', 'string'),
+                                                                 ('short_name', 'string'),
+                                                                 ('alias', 'string'),
+                                                                 ('test_column_name', 'string'),
+                                                                 ('severity', 'string'),
+                                                                 ('warn_if', 'string'),
+                                                                 ('error_if', 'string'),
+                                                                 ('test_params', 'long_string'),
+                                                                 ('test_namespace', 'string'),
+                                                                 ('tags', 'long_string'),
+                                                                 ('model_tags', 'long_string'),
+                                                                 ('model_owners', 'long_string'),
+                                                                 ('meta', 'long_string'),
+                                                                 ('depends_on_macros', 'long_string'),
+                                                                 ('depends_on_nodes', 'long_string'),
+                                                                 ('parent_model_unique_id', 'string'),
+                                                                 ('description', 'long_string'),
+                                                                 ('package_name', 'string'),
+                                                                 ('type', 'string'),
+                                                                 ('original_path', 'long_string'),
+                                                                 ('"PATH"', 'string'),
                                                                  ('generated_at', 'string'),
                                                                  ('metadata_hash', 'string'),
                                                                  ('quality_dimension', 'string')

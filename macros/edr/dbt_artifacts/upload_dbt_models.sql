@@ -1,3 +1,7 @@
+{% macro get_dbt_models_empty_table_query() %}
+    {{ return(adapter.dispatch('get_dbt_models_empty_table_query', 'elementary')()) }}
+{% endmacro %}
+
 {%- macro upload_dbt_models(should_commit=false, metadata_hashes=none) -%}
     {% set relation = elementary.get_elementary_relation('dbt_models') %}
     {% if execute and relation %}
@@ -7,7 +11,8 @@
     {{- return('') -}}
 {%- endmacro -%}
 
-{% macro get_dbt_models_empty_table_query() %}
+
+{% macro default__get_dbt_models_empty_table_query() %}
     {% set columns = [
         ('unique_id', 'string'),
         ('alias', 'string'),
@@ -37,6 +42,36 @@
     {{ return(dbt_models_empty_table_query) }}
 {% endmacro %}
 
+{% macro exasol__get_dbt_models_empty_table_query() %}
+    {% set columns = [
+        ('unique_id', 'string'),
+        ('alias', 'string'),
+        ('checksum', 'string'),
+        ('materialization', 'string'),
+        ('tags', 'long_string'),
+        ('meta', 'long_string'),
+        ('owner', 'string'),
+        ('database_name', 'string'),
+        ('schema_name', 'string'),
+        ('depends_on_macros', 'long_string'),
+        ('depends_on_nodes', 'long_string'),
+        ('description', 'long_string'),
+        ('name', 'string'),
+        ('package_name', 'string'),
+        ('original_path', 'long_string'),
+        ('"PATH"', 'string'),
+        ('patch_path', 'string'),
+        ('generated_at', 'string'),
+        ('metadata_hash', 'string'),
+    ] %}
+    {% if target.type == "bigquery" or elementary.get_config_var("include_other_warehouse_specific_columns") %}
+        {% do columns.extend([('bigquery_partition_by', 'string')]) %}
+    {% endif %}
+
+    {% set dbt_models_empty_table_query = elementary.empty_table(columns) %}
+    {{ return(dbt_models_empty_table_query) }}
+{% endmacro %}
+
 {% macro flatten_model(node_dict) %}
     {% set checksum_dict = elementary.safe_get_with_default(node_dict, 'checksum', {}) %}
     {% set config_dict = elementary.safe_get_with_default(node_dict, 'config', {}) %}
@@ -50,7 +85,7 @@
     {% if raw_owner is string %}
         {% set owners = raw_owner.split(',') %}
         {% for owner in owners %}
-            {% do formatted_owner.append(owner | trim) %}  
+            {% do formatted_owner.append(owner | trim) %}
         {% endfor %}
     {% elif raw_owner is iterable %}
         {% do formatted_owner.extend(raw_owner) %}
