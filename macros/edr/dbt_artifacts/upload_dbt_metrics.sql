@@ -56,7 +56,7 @@
                                                                    ('"META"', 'long_string'),
                                                                    ('package_name', 'string'),
                                                                    ('original_path', 'long_string'),
-                                                                   ('path_val', 'string'),
+                                                                   ('"PATH"', 'string'),
                                                                    ('generated_at', 'string'),
                                                                    ('metadata_hash', 'string'),
                                                                    ]) %}

@@ -1,5 +1,6 @@
+
 {% macro get_dbt_models_empty_table_query() %}
-    {{ return(adapter.dispatch('get_dbt_models_empty_table_query', 'elementary')()) }}
+    {{ return(adapter.dispatch('get_dbt_models_empty_table_query','elementary')()) }}
 {% endmacro %}
 
 {%- macro upload_dbt_models(should_commit=false, metadata_hashes=none) -%}
@@ -10,6 +11,7 @@
     {%- endif -%}
     {{- return('') -}}
 {%- endmacro -%}
+
 
 
 {% macro default__get_dbt_models_empty_table_query() %}

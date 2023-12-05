@@ -1,3 +1,6 @@
+
+
+
 {%- macro upload_dbt_columns(should_commit=false, metadata_hashes=none) -%}
     {% set relation = elementary.get_elementary_relation('dbt_columns') %}
     {% if execute and relation %}

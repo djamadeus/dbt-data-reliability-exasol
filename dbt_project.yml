@@ -23,3 +23,6 @@ on-run-start:
   - "{{ elementary.on_run_start() }}"
 on-run-end:
   - "{{ elementary.on_run_end() }}"
+
+models:
+  +on_schema_change: "sync_all_columns"
