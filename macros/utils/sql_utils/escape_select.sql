@@ -9,3 +9,7 @@
 {% macro redshift__escape_select(column_names) %}
     {% do return('\"' + column_names | join('\", \"') + '\"') %}
 {% endmacro %}
+
+{% macro exasol__escape_select(column_names) %}
+    {% do return('\"' + column_names | join('\", \"') + '\"') %}
+{% endmacro %}

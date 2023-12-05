@@ -44,6 +44,10 @@
   {% do return(elementary.materialize_table.call_macro('redshift')) %}
 {% endmaterialization %}
 
+{% materialization table, adapter="exasol", supported_languages=["sql", "python"] %}
+  {% do return(elementary.materialize_table.call_macro('exasol')) %}
+{% endmaterialization %}
+
 {% materialization table, adapter="athena", supported_languages=["sql"] %}
   {% set relations = dbt.materialization_table_athena.call_macro() %}
   {% if not elementary.is_elementary_enabled() %}

@@ -48,7 +48,7 @@
     {% set base_insert_query %}
        insert into {{ table_relation }}
          ({%- for column in columns -%}
-           {{- column.name -}} {{- "," if not loop.last else "" -}}
+           {{- edr_quote_column(column.name) -}} {{- "," if not loop.last else "" -}}
          {%- endfor -%}) values
     {% endset %}
 
@@ -111,7 +111,7 @@
     {% set insert_rows_query %}
         insert into {{ table_relation }}
             ({%- for column in columns -%}
-                {{- column.name -}} {{- "," if not loop.last else "" -}}
+                {{- edr_quote_column(column.name)  -}} {{- "," if not loop.last else "" -}}
             {%- endfor -%}) values
             {% for row in rows -%}
                 ({%- for column in columns -%}
@@ -124,6 +124,7 @@
     {{ return(insert_rows_query) }}
 {%- endmacro %}
 
+
 {% macro escape_special_chars(string_value) %}
     {{ return(adapter.dispatch('escape_special_chars', 'elementary')(string_value)) }}
 {% endmacro %}
@@ -134,6 +135,10 @@
 
 {%- macro redshift__escape_special_chars(string_value) -%}
     {{- return(string_value | replace("\\", "\\\\") | replace("'", "\\'") | replace("\n", "\\n") | replace("\r", "\\r")) -}}
+{%- endmacro -%}
+
+{%- macro exasol__escape_special_chars(string_value) -%}
+    {{- return(string_value | replace("'", "''")) -}}
 {%- endmacro -%}
 
 {%- macro postgres__escape_special_chars(string_value) -%}
