@@ -3,6 +3,7 @@
     {{ return(adapter.dispatch('edr_timeadd', 'elementary')(date_part, number, timestamp_expression)) }}
 {%- endmacro %}
 
+
 {# Snowflake #}
 {% macro default__edr_timeadd(date_part, number, timestamp_expression) %}
     dateadd({{ date_part }}, {{ elementary.edr_cast_as_int(number) }}, {{ elementary.edr_cast_as_timestamp(timestamp_expression) }})
@@ -28,4 +29,22 @@
 
 {% macro athena__edr_timeadd(date_part, number, timestamp_expression) %}
     date_add('{{ date_part }}', {{ elementary.edr_cast_as_int(number) }}, {{ elementary.edr_cast_as_timestamp(timestamp_expression) }})
+{% endmacro %}
+
+{% macro exasol__edr_timeadd(date_part, number, timestamp_expression) %}
+    {%- if date_part | lower == 'day' %}
+       add_days({{ timestamp_expression }}, {{ elementary.edr_cast_as_int(number) }} )
+    {%- elif date_part | lower == 'month' %}
+        add_months({{ timestamp_expression }}, {{ elementary.edr_cast_as_int(number) }} )
+    {%- elif date_part | lower == 'hour' %}
+        add_hours({{ timestamp_expression }}, {{ elementary.edr_cast_as_int(number) }} )
+    {%- elif date_part | lower == 'minute' %}
+        add_minutes({{ timestamp_expression }}, {{ elementary.edr_cast_as_int(number) }} )
+    {%- elif date_part | lower == 'second' %}
+        add_seconds({{ timestamp_expression }}, {{ elementary.edr_cast_as_int(number) }} )
+    {%- elif date_part | lower == 'week' %}
+        add_weeks({{ timestamp_expression }}, {{ elementary.edr_cast_as_int(number) }} )
+    {%- elif date_part | lower == 'year' %}
+        add_years({{ timestamp_expression }}, {{ elementary.edr_cast_as_int(number) }} )
+    {%- endif %}
 {% endmacro %}

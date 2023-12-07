@@ -2,6 +2,11 @@
     {{ return(adapter.dispatch('dummy_values', 'elementary')()) }}
 {% endmacro %}
 
+{% macro empty_data_monitoring_metrics() %}
+    {{ return(adapter.dispatch('empty_data_monitoring_metrics','elementary')()) }}
+{% endmacro %}
+
+
 {% macro empty_elementary_test_results() %}
     {{ elementary.empty_table([
     ('id','long_string'),
@@ -57,7 +62,7 @@
     ]) }}
 {% endmacro %}
 
-{% macro empty_data_monitoring_metrics(with_created_at=true) %}
+{% macro default__empty_data_monitoring_metrics(with_created_at=true) %}
     {% set columns = [('id','string'),
                       ('full_table_name','string'),
                       ('column_name','string'),
@@ -68,6 +73,27 @@
                       ('bucket_end','timestamp'),
                       ('bucket_duration_hours','int'),
                       ('updated_at','timestamp'),
+                      ('dimension','string'),
+                      ('dimension_value','string'),
+                      ('metric_properties','string')]
+    %}
+    {% if with_created_at %}
+        {% do columns.append(('created_at','timestamp')) %}
+    {% endif %}
+    {{ elementary.empty_table(columns) }}
+{% endmacro %}
+
+{% macro exasol__empty_data_monitoring_metrics(with_created_at=true) %}
+    {% set columns = [('id','string'),
+                      ('full_table_name','string'),
+                      ('column_name','string'),
+                      ('metric_name','string'),
+                      ('metric_value','float'),
+                      ('source_value','string'),
+                      ('bucket_start','timestamp'),
+                      ('bucket_end','timestamp'),
+                      ('bucket_duration_hours','int'),
+                      ('updated_at','timestamp2'),
                       ('dimension','string'),
                       ('dimension_value','string'),
                       ('metric_properties','string')]
@@ -160,7 +186,8 @@
      'int': 123456789,
      'bigint': 31474836478,
      'float': 123456789.99,
-     'timestamp': "2091-02-17T00:00:00.000"
+     'timestamp': "2091-02-17T00:00:00.000",
+     'timestamp2': "2091-02-17 00:00:00.000"
     } %}
 
     {{ return(dummy_values) }}

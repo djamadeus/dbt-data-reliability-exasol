@@ -14,3 +14,11 @@
 {% macro bigquery__edr_date_trunc(date_part, date_expression) %}
     timestamp_trunc(cast({{ date_expression }} as timestamp), {{ date_part }})
 {% endmacro %}
+
+{% macro exasol__edr_date_trunc(date_part, date_expression) %}
+    date_trunc('{{ date_part }}', cast({{ date_expression }} as timestamp))
+{% endmacro %}
+
+
+
+
