@@ -1,3 +1,7 @@
+{% macro get_dbt_tests_empty_table_query() %}
+    {{ return(adapter.dispatch('get_dbt_tests_empty_table_query','elementary')()) }}
+{% endmacro %}
+
 {%- macro upload_dbt_tests(should_commit=false, metadata_hashes=none) -%}
     {% set relation = elementary.get_elementary_relation('dbt_tests') %}
     {% if execute and relation %}
@@ -10,7 +14,7 @@
 
 
 
-{% macro get_dbt_tests_empty_table_query() %}
+{% macro default__get_dbt_tests_empty_table_query() %}
     {% set dbt_tests_empty_table_query = elementary.empty_table([('unique_id', 'string'),
                                                                  ('database_name', 'string'),
                                                                  ('schema_name', 'string'),
@@ -34,10 +38,42 @@
                                                                  ('package_name', 'string'),
                                                                  ('type', 'string'),
                                                                  ('original_path', 'long_string'),
-                                                                 ('path', 'string'),
+                                                                 ('"PATH"', 'string'),
                                                                  ('generated_at', 'string'),
                                                                  ('metadata_hash', 'string'),
                                                                  ('quality_dimension', 'string')
+                                                                 ]) %}
+    {{ return(dbt_tests_empty_table_query) }}
+{% endmacro %}
+
+{% macro exasol__get_dbt_tests_empty_table_query() %}
+    {% set dbt_tests_empty_table_query = elementary.empty_table([('UNIQUE_ID', 'string'),
+                                                                 ('DATABASE_NAME', 'string'),
+                                                                 ('SCHEMA_NAME', 'string'),
+                                                                 ('NAME', 'string'),
+                                                                 ('SHORT_NAME', 'string'),
+                                                                 ('ALIAS', 'string'),
+                                                                 ('TEST_COLUMN_NAME', 'string'),
+                                                                 ('SEVERITY', 'string'),
+                                                                 ('WARN_IF', 'string'),
+                                                                 ('ERROR_IF', 'string'),
+                                                                 ('TEST_PARAMS', 'long_string'),
+                                                                 ('TEST_NAMESPACE', 'string'),
+                                                                 ('TAGS', 'long_string'),
+                                                                 ('MODEL_TAGS', 'long_string'),
+                                                                 ('MODEL_OWNERS', 'long_string'),
+                                                                 ('META', 'long_string'),
+                                                                 ('DEPENDS_ON_MACROS', 'long_string'),
+                                                                 ('DEPENDS_ON_NODES', 'long_string'),
+                                                                 ('PARENT_MODEL_UNIQUE_ID', 'string'),
+                                                                 ('DESCRIPTION', 'long_string'),
+                                                                 ('PACKAGE_NAME', 'string'),
+                                                                 ('TYPE', 'string'),
+                                                                 ('ORIGINAL_PATH', 'long_string'),
+                                                                 ('"PATH"', 'string'),
+                                                                 ('GENERATED_AT', 'string'),
+                                                                 ('METADATA_HASH', 'string'),
+                                                                 ('QUALITY_DIMENSION', 'string')
                                                                  ]) %}
     {{ return(dbt_tests_empty_table_query) }}
 {% endmacro %}

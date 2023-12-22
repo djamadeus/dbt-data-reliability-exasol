@@ -67,10 +67,7 @@ metrics_anomaly_score as (
     order by bucket_end desc
 
 
-),
-
-final as (
-
+)
     select
         id,
         full_table_name,
@@ -93,6 +90,3 @@ final as (
             else false end
         as is_anomaly
     from metrics_anomaly_score
-)
-
-select * from final

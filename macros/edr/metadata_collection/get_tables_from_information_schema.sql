@@ -87,6 +87,30 @@
     from information_schema_tables
 {% endmacro %}
 
+
+{% macro exasol__get_tables_from_information_schema(schema_tuple) %}
+    {%- set database_name, schema_name = schema_tuple %}
+
+    with information_schema_tables as (
+
+        select
+            '{{ database_name }}' as database_name,
+            upper(ROOT_NAME) as schema_name,
+            upper(OBJECT_NAME) as table_name
+        from sys.EXA_ALL_OBJECTS
+            where upper(ROOT_NAME) = upper('{{ schema_name }}') and OBJECT_TYPE = 'TABLE'
+
+    )
+
+    select
+        {{ elementary.full_table_name() }} as full_table_name,
+        upper(database_name || '.' || schema_name) as full_schema_name,
+        database_name,
+        schema_name,
+        table_name
+    from information_schema_tables
+{% endmacro %}
+
 {% macro databricks__get_tables_from_information_schema(schema_tuple) %}
     {%- set database_name, schema_name = schema_tuple %}
     {% set schema_relation = api.Relation.create(database=database_name, schema=schema_name).without_identifier() %}

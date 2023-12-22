@@ -42,6 +42,11 @@
     {% do return("varchar") %}
 {% endmacro %}
 
+{% macro exasol__edr_type_string() %}
+    {# Default max varchar size in Snowflake is 16MB #}
+    {% do return("varchar (2000000)") %}
+{% endmacro %}
+
 {% macro bigquery__edr_type_string() %}
     {# Default max string size in Bigquery is 65K #}
     {% do return("string") %}

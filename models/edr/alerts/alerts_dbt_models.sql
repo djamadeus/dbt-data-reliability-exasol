@@ -26,11 +26,11 @@ with error_models as (
             materialization,
             tags,
             package_name,
-            path,
+            mrr.path,
             original_path,
             owner,
             alias 
-    from {{ ref('model_run_results') }}
+    from {{ ref('model_run_results') }} as mrr
   
     union all
   
@@ -53,11 +53,11 @@ with error_models as (
             materialization,
             tags,
             package_name,
-            path,
+            srr.path,
             original_path,
             owner,
             alias  
-  from {{ ref('snapshot_run_results') }}
+  from {{ ref('snapshot_run_results') }} as srr
 )
 
 
@@ -66,7 +66,7 @@ select model_execution_id as alert_id,
        {{ elementary.edr_cast_as_timestamp("generated_at") }} as detected_at,
        database_name,
        materialization,
-       path,
+       error_models.path,
        original_path,
        schema_name,
        message,

@@ -1,3 +1,7 @@
+{% macro get_dbt_metrics_empty_table_query() %}
+    {{ return(adapter.dispatch('get_dbt_metrics_empty_table_query','elementary')()) }}
+{% endmacro %}
+
 {%- macro upload_dbt_metrics(should_commit=false, metadata_hashes=none) -%}
     {% set relation = elementary.get_elementary_relation('dbt_metrics') %}
     {% if execute and relation %}
@@ -9,7 +13,7 @@
 
 
 
-{% macro get_dbt_metrics_empty_table_query() %}
+{% macro default__get_dbt_metrics_empty_table_query() %}
     {% set dbt_metrics_empty_table_query = elementary.empty_table([('unique_id', 'string'),
                                                                    ('name', 'string'),
                                                                    ('label', 'string'),
@@ -28,6 +32,31 @@
                                                                    ('package_name', 'string'),
                                                                    ('original_path', 'long_string'),
                                                                    ('path', 'string'),
+                                                                   ('generated_at', 'string'),
+                                                                   ('metadata_hash', 'string'),
+                                                                   ]) %}
+    {{ return(dbt_metrics_empty_table_query) }}
+{% endmacro %}
+
+{% macro exasol__get_dbt_metrics_empty_table_query() %}
+    {% set dbt_metrics_empty_table_query = elementary.empty_table([('unique_id', 'string'),
+                                                                   ('"NAME"', 'string'),
+                                                                   ('label', 'string'),
+                                                                   ('"MODEL"', 'string'),
+                                                                   ('"TYPE"', 'string'),
+                                                                   ('"SQL"', 'long_string'),
+                                                                   ('"TIMESTAMP"', 'string'),
+                                                                   ('filters', 'long_string'),
+                                                                   ('time_grains', 'long_string'),
+                                                                   ('dimensions', 'long_string'),
+                                                                   ('depends_on_macros', 'long_string'),
+                                                                   ('depends_on_nodes', 'long_string'),
+                                                                   ('description', 'long_string'),
+                                                                   ('"TAGS"', 'long_string'),
+                                                                   ('"META"', 'long_string'),
+                                                                   ('package_name', 'string'),
+                                                                   ('original_path', 'long_string'),
+                                                                   ('"PATH"', 'string'),
                                                                    ('generated_at', 'string'),
                                                                    ('metadata_hash', 'string'),
                                                                    ]) %}

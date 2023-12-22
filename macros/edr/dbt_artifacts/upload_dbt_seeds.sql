@@ -1,3 +1,8 @@
+{% macro get_dbt_seeds_empty_table_query() %}
+    {{ return(adapter.dispatch('get_dbt_seeds_empty_table_query','elementary')()) }}
+{% endmacro %}
+
+
 {%- macro upload_dbt_seeds(should_commit=false, metadata_hashes=none) -%}
     {% set relation = elementary.get_elementary_relation('dbt_seeds') %}
     {% if execute and relation %}
@@ -7,7 +12,7 @@
     {{- return('') -}}
 {%- endmacro -%}
 
-{% macro get_dbt_seeds_empty_table_query() %}
+{% macro default__get_dbt_seeds_empty_table_query() %}
     {% set dbt_seeds_empty_table_query = elementary.empty_table([('unique_id', 'string'),
                                                                   ('alias', 'string'),
                                                                   ('checksum', 'string'),
@@ -21,6 +26,26 @@
                                                                   ('package_name', 'string'),
                                                                   ('original_path', 'long_string'),
                                                                   ('path', 'string'),
+                                                                  ('generated_at', 'string'),
+                                                                  ('metadata_hash', 'string'),
+                                                                  ]) %}
+    {{ return(dbt_seeds_empty_table_query) }}
+{% endmacro %}
+
+{% macro exasol__get_dbt_seeds_empty_table_query() %}
+    {% set dbt_seeds_empty_table_query = elementary.empty_table([('unique_id', 'string'),
+                                                                  ('alias', 'string'),
+                                                                  ('checksum', 'string'),
+                                                                  ('tags', 'long_string'),
+                                                                  ('meta', 'long_string'),
+                                                                  ('owner', 'string'),
+                                                                  ('database_name', 'string'),
+                                                                  ('schema_name', 'string'),
+                                                                  ('description', 'long_string'),
+                                                                  ('name', 'string'),
+                                                                  ('package_name', 'string'),
+                                                                  ('original_path', 'long_string'),
+                                                                  ('"PATH"', 'string'),
                                                                   ('generated_at', 'string'),
                                                                   ('metadata_hash', 'string'),
                                                                   ]) %}

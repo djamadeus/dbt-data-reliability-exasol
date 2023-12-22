@@ -1,4 +1,4 @@
-{% macro get_columns_from_information_schema(schema_tuple, table_name = none) %}
+{% macro get_columns_from_information_schema(database_name, schema_name, table_name = none) %}
     {%- set database_name, schema_name = schema_tuple %}
     {{ return(adapter.dispatch('get_columns_from_information_schema', 'elementary')(database_name, schema_name, table_name)) }}
 {% endmacro %}
@@ -31,6 +31,18 @@
     {% endif %}
 {% endmacro %}
 
+{% macro exasol__get_columns_from_information_schema(database_name, schema_name) %}
+select
+    upper('{{ database_name }}' || '.' || COLUMN_SCHEMA || '.' || COLUMN_TABLE) as full_table_name,
+    '{{ database_name }}' as database_name,
+    upper(COLUMN_SCHEMA) as schema_name,
+    upper(COLUMN_TABLE) as table_name,
+    upper(COLUMN_NAME) as column_name,
+    COLUMN_TYPE
+from sys.EXA_ALL_COLUMNS
+where upper(COLUMN_SCHEMA) = upper('{{ schema_name }}')
+    {% endmacro %}
+
 {% macro redshift__get_columns_from_information_schema(database_name, schema_name, table_name = none) %}
     select
         upper(table_catalog || '.' || table_schema || '.' || table_name) as full_table_name,
@@ -47,39 +59,43 @@
 {% endmacro %}
 
 {% macro postgres__get_columns_from_information_schema(database_name, schema_name, table_name = none) %}
-    select
-        upper(table_catalog || '.' || table_schema || '.' || table_name) as full_table_name,
-        upper(table_catalog) as database_name,
-        upper(table_schema) as schema_name,
-        upper(table_name) as table_name,
-        upper(column_name) as column_name,
-        data_type
-    from information_schema.columns
-    where upper(table_schema) = upper('{{ schema_name }}')
+select
+    upper(table_catalog || '.' || table_schema || '.' || table_name) as full_table_name,
+    upper(table_catalog) as database_name,
+    upper(table_schema) as schema_name,
+    upper(table_name) as table_name,
+    upper(column_name) as column_name,
+    data_type
+from information_schema.columns
+
+where upper(table_schema) = upper('{{ schema_name }}')
     {% if table_name %}
       and upper(table_name) = upper('{{ table_name }}')
     {% endif %}
 {% endmacro %}
 
+
+
 {% macro databricks__get_columns_from_information_schema(database_name, schema_name, table_name = none) %}
-    {% if target.catalog is none %}
+     {% if target.catalog is none %}
         {# Information schema is only available when using Unity Catalog. #}
         {% do return(elementary.get_empty_columns_from_information_schema_table()) %}
     {% endif %}
     {% set column_relation = api.Relation.create('system', 'information_schema', 'columns') %}
-    select
-        upper(table_catalog || '.' || table_schema || '.' || table_name) as full_table_name,
-        upper(table_catalog) as database_name,
-        upper(table_schema) as schema_name,
-        upper(table_name) as table_name,
-        upper(column_name) as column_name,
-        data_type
-    from {{ column_relation }}
-    where upper(table_schema) = upper('{{ schema_name }}')
+select
+    upper(table_catalog || '.' || table_schema || '.' || table_name) as full_table_name,
+    upper(table_catalog) as database_name,
+    upper(table_schema) as schema_name,
+    upper(table_name) as table_name,
+    upper(column_name) as column_name,
+    data_type
+from {{ column_relation }}
+where upper(table_schema) = upper('{{ schema_name }}')
     {% if table_name %}
         and upper(table_name) = upper('{{ table_name }}')
     {% endif %}
 {% endmacro %}
+
 
 {% macro spark__get_columns_from_information_schema(database_name, schema_name, table_name = none) %}
     {{ elementary.get_empty_columns_from_information_schema_table() }}
